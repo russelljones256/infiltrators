@@ -41,7 +41,7 @@ public:
     bool OnUserCreate() override {
         std::vector<node*> node_map = PATHFINDING_H::Generate_nodes_map(current_map);
         std::vector<std::vector<int>> path;
-        path = PATHFINDING_H::A_star(1, 2, 5, 6, node_map, current_map);
+        path = PATHFINDING_H::A_star(0, 0, 0, 5, node_map, current_map);
 
         for (auto & i : path){std::cout << i[0] << " " << i[1] << std::endl;}
 
