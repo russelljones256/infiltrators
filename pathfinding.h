@@ -55,7 +55,6 @@ bool comparePtrToNode(node* a, node* b) { return (a->GlobalGoal < b->GlobalGoal)
 
 std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector<node*> node_map,const map& current_map){
 
-    std::cout << "A star begin" << std::endl;
     int len = node_map.size();
     for (int i = 0; i < len; i++){
         node_map[i]->GlobalGoal = 1000;
@@ -111,16 +110,17 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
     std::vector<std::vector<int>> path;
     current_node = node_map[(current_map.map_width) * y2 + x2];
     while (true){
-        path.push_back({current_node->x, current_node->y});
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
 
             break;
         }else{
+            path.push_back({current_node->x, current_node->y});
+
             current_node = current_node->Parent;
 
         }
     }
-
+    std::reverse(path.begin(), path.end());
     return path;
 }
 
