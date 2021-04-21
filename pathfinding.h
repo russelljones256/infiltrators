@@ -91,9 +91,12 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
                 }
             }
         }
+
         current_node->IsVisited = true;
         std::sort(nodes_to_test.begin(), nodes_to_test.end(), comparePtrToNode);
-        while (nodes_to_test[0]->IsVisited) {
+
+        while (nodes_to_test[0]->IsVisited and nodes_to_test.size() != 0) {
+            std::cout << nodes_to_test.size() <<  std::endl;
             nodes_to_test.erase(nodes_to_test.begin());
         }
         if (nodes_to_test.empty()) {
@@ -111,13 +114,24 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
 
     std::cout << "path writing" << std::endl;
     std::vector<std::vector<int>> path;
+    std::cout << "test1" <<  std::endl;
+
     current_node = node_map[(current_map.map_width) * y2 + x2];
+    std::cout << "test 2" <<  std::endl;
+    std::cout << current_node->Parent->x << " " << current_node->Parent->y << std::endl;
     while (true){
         path.push_back({current_node->x, current_node->y});
+        std::cout << "test 3" <<  std::endl;
+
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
+            std::cout << "test 4" <<  std::endl;
+
             break;
         }else{
+            std::cout << "test 5" <<  std::endl;
             current_node = current_node->Parent;
+            std::cout << "test 6" <<  std::endl;
+
         }
     }
 
