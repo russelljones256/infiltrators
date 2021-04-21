@@ -71,8 +71,6 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
     while (true) {
 
         for (int i = 0; i < (int) (current_node->vecNeighbours.size()); i++) {
-           // std::cout << current_node->x << " " << current_node->y << " " << current_node->vecNeighbours[i]->x << " " << current_node->vecNeighbours[i]->y <<  std::endl;
-
             if (!current_node->vecNeighbours[i]->IsVisited) {
                 if (x2 != current_node->vecNeighbours[i]->x or y2 != current_node->vecNeighbours[i]->y) {
 
@@ -84,7 +82,10 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
                     if (current_node->LocalGoal + 1 < current_node->vecNeighbours[i]->LocalGoal){
                         current_node->vecNeighbours[i]->LocalGoal = current_node->LocalGoal + 1;
                         current_node->vecNeighbours[i]->Parent = current_node;
-                        std::cout << current_node->Parent->x << " " << current_node->Parent->y << std::endl;
+
+                        std::cout << "neighbour  "<<current_node->vecNeighbours[i]->x << " " << current_node->vecNeighbours[i]->y << std::endl;
+                        std::cout << current_node->vecNeighbours[i]->Parent->x << " " << current_node->vecNeighbours[i]->Parent->y << std::endl;
+                        std::cout << std::endl;
 
                         current_node->vecNeighbours[i]->GlobalGoal =
                                 current_node->vecNeighbours[i]->LocalGoal + sqrt(
@@ -116,23 +117,15 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
 
     std::cout << "path writing" << std::endl;
     std::vector<std::vector<int>> path;
-    std::cout << "test1" <<  std::endl;
-
     current_node = node_map[(current_map.map_width) * y2 + x2];
-    std::cout << "test 2" <<  std::endl;
     std::cout << current_node->Parent->x << " " << current_node->Parent->y << std::endl;
     while (true){
         path.push_back({current_node->x, current_node->y});
-        std::cout << "test 3" <<  std::endl;
-
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
-            std::cout << "test 4" <<  std::endl;
 
             break;
         }else{
-            std::cout << "test 5" <<  std::endl;
             current_node = current_node->Parent;
-            std::cout << "test 6" <<  std::endl;
 
         }
     }

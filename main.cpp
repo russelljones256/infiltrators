@@ -42,9 +42,9 @@ public:
         std::vector<node*> node_map = PATHFINDING_H::Generate_nodes_map(current_map);
         std::cout << node_map[current_map.map_width * 0]->x << std::endl;
         std::vector<std::vector<int>> path;
-        path = PATHFINDING_H::A_star(0, 0, 0, 5, node_map, current_map);
+       // path = PATHFINDING_H::A_star(0, 0, 10, 0, node_map, current_map);
 
-        for (auto & i : path){std::cout << i[0] << " " << i[1] << std::endl;}
+        // for (auto & i : path){std::cout << i[0] << " " << i[1] << std::endl;}
 
         warrior_m.path = {{4,6},{4,7},{5,7},{5,8}};
         warrior_m.name = "warrior";
