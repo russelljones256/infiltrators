@@ -23,33 +23,29 @@ std::vector<node*> Generate_nodes_map(const map& current_map){
     node dummy_1_node;
     std::vector<node*> node_map = {&dummy_1_node};
 
-
     for (int i = 0; i < current_map.map_width * current_map.map_height; i++){
         node* a_node = new node;
-        node_map[i] = a_node;
         a_node->x = i % current_map.map_width;
         a_node->y = std::floor(i / current_map.map_width);
-        std::cout << a_node->x << std::endl;
+        // if (i == 0){std::cout << node_map[i]->x << " " << node_map[i]->y <<std::endl;}
         node_map.push_back(a_node);
     }
     node_map.erase(node_map.begin());
 
     for (int i = 0; i < node_map.size(); i++) {
-
+        // if (i == 0){std::cout << node_map[i]->x << " " << node_map[i]->y <<std::endl;}
         node dummy_node;
         node_map[i]->vecNeighbours.push_back(&dummy_node);
-        float x = i % current_map.map_width;
-        float y = std::floor(i / current_map.map_width);
-        if (!current_map.map[i + 1].hard and x < current_map.map_width) {
+        if (!current_map.map[i + 1].hard and node_map[i]->x < current_map.map_width) {
             node_map[i]->vecNeighbours.push_back(node_map[i + 1]);
         }
-        if (!current_map.map[i - 1].hard and x > 0) {
+        if (!current_map.map[i - 1].hard and node_map[i]->x > 0) {
             node_map[i]->vecNeighbours.push_back(node_map[i - 1]);
         }
-        if (!current_map.map[i - current_map.map_width].hard and y > 0) {
+        if (!current_map.map[i - current_map.map_width].hard and node_map[i]->y > 0) {
             node_map[i]->vecNeighbours.push_back(node_map[i - current_map.map_width]);
         }
-        if (!current_map.map[i + current_map.map_width].hard and y < current_map.map_height) {
+        if (!current_map.map[i + current_map.map_width].hard and node_map[i]->y < current_map.map_height) {
             node_map[i]->vecNeighbours.push_back(node_map[i + current_map.map_width]);
         }
         node_map[i]->vecNeighbours.erase(node_map[i]->vecNeighbours.begin());
@@ -98,15 +94,16 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
         current_node->IsVisited = true;
         std::sort(nodes_to_test.begin(), nodes_to_test.end(), comparePtrToNode);
         if (nodes_to_test.empty()) {
+
             break;
 
         } else {
             current_node = nodes_to_test[0];
-            std::cout << "test" << std::endl;
 
         }
         while (nodes_to_test[0]->IsVisited) {
             nodes_to_test.erase(nodes_to_test.begin());
+
 
         }
 

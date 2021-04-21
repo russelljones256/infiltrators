@@ -72,4 +72,5 @@ tile get_map_site(int x, int y, map current_map){
     return current_map.map[(current_map.map_width) * y + x];
 }
 
+
 #endif //MAPS_H
