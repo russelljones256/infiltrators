@@ -72,26 +72,19 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
 
         for (int i = 0; i < (int) (current_node->vecNeighbours.size()); i++) {
             if (!current_node->vecNeighbours[i]->IsVisited) {
-                if (x2 != current_node->vecNeighbours[i]->x or y2 != current_node->vecNeighbours[i]->y) {
+                if (current_node->vecNeighbours[i]->LocalGoal == 1000) {
+                    nodes_to_test.push_back(current_node->vecNeighbours[i]);
 
-                    if (current_node->vecNeighbours[i]->LocalGoal == 1000) {
-                        nodes_to_test.push_back(current_node->vecNeighbours[i]);
+                }
 
-                    }
+                if (current_node->LocalGoal + 1 < current_node->vecNeighbours[i]->LocalGoal) {
+                    current_node->vecNeighbours[i]->LocalGoal = current_node->LocalGoal + 1;
+                    current_node->vecNeighbours[i]->Parent = current_node;
 
-                    if (current_node->LocalGoal + 1 < current_node->vecNeighbours[i]->LocalGoal){
-                        current_node->vecNeighbours[i]->LocalGoal = current_node->LocalGoal + 1;
-                        current_node->vecNeighbours[i]->Parent = current_node;
-
-                        std::cout << "neighbour  "<<current_node->vecNeighbours[i]->x << " " << current_node->vecNeighbours[i]->y << std::endl;
-                        std::cout << current_node->vecNeighbours[i]->Parent->x << " " << current_node->vecNeighbours[i]->Parent->y << std::endl;
-                        std::cout << std::endl;
-
-                        current_node->vecNeighbours[i]->GlobalGoal =
-                                current_node->vecNeighbours[i]->LocalGoal + sqrt(
-                                        pow((y2 - current_node->vecNeighbours[i]->y), 2) +
-                                        pow((x2 - current_node->vecNeighbours[i]->x), 2));
-                    }
+                    current_node->vecNeighbours[i]->GlobalGoal =
+                            current_node->vecNeighbours[i]->LocalGoal + sqrt(
+                                    pow((y2 - current_node->vecNeighbours[i]->y), 2) +
+                                    pow((x2 - current_node->vecNeighbours[i]->x), 2));
                 }
             }
         }
@@ -115,10 +108,8 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
     }
 
 
-    std::cout << "path writing" << std::endl;
     std::vector<std::vector<int>> path;
     current_node = node_map[(current_map.map_width) * y2 + x2];
-    std::cout << current_node->Parent->x << " " << current_node->Parent->y << std::endl;
     while (true){
         path.push_back({current_node->x, current_node->y});
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
