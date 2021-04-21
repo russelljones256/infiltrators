@@ -64,13 +64,14 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
     node* current_node = node_map[(current_map.map_width) * y1 + x1];
 
     current_node->Parent = current_node;
+    current_node->LocalGoal = 0;
 
     std::vector<node*> nodes_to_test = {current_node};
 
     while (true) {
 
         for (int i = 0; i < (int) (current_node->vecNeighbours.size()); i++) {
-            std::cout << current_node->x << " " << current_node->y << " " << current_node->vecNeighbours[i]->x << " " << current_node->vecNeighbours[i]->y <<  std::endl;
+           // std::cout << current_node->x << " " << current_node->y << " " << current_node->vecNeighbours[i]->x << " " << current_node->vecNeighbours[i]->y <<  std::endl;
 
             if (!current_node->vecNeighbours[i]->IsVisited) {
                 if (x2 != current_node->vecNeighbours[i]->x or y2 != current_node->vecNeighbours[i]->y) {
@@ -83,6 +84,8 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
                     if (current_node->LocalGoal + 1 < current_node->vecNeighbours[i]->LocalGoal){
                         current_node->vecNeighbours[i]->LocalGoal = current_node->LocalGoal + 1;
                         current_node->vecNeighbours[i]->Parent = current_node;
+                        std::cout << current_node->Parent->x << " " << current_node->Parent->y << std::endl;
+
                         current_node->vecNeighbours[i]->GlobalGoal =
                                 current_node->vecNeighbours[i]->LocalGoal + sqrt(
                                         pow((y2 - current_node->vecNeighbours[i]->y), 2) +
@@ -96,7 +99,6 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
         std::sort(nodes_to_test.begin(), nodes_to_test.end(), comparePtrToNode);
 
         while (nodes_to_test[0]->IsVisited and nodes_to_test.size() != 0) {
-            std::cout << nodes_to_test.size() <<  std::endl;
             nodes_to_test.erase(nodes_to_test.begin());
         }
         if (nodes_to_test.empty()) {
