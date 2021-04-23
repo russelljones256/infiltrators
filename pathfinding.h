@@ -13,7 +13,7 @@ struct node{
     double GlobalGoal = 1000;
     float LocalGoal = 1000;
     std::vector<node*> vecNeighbours = {};
-    node* Parent;
+    node* Parent = nullptr;
     int x;
     int y;
 };
@@ -54,7 +54,9 @@ std::vector<node*> Generate_nodes_map(const map& current_map){
 bool comparePtrToNode(node* a, node* b) { return (a->GlobalGoal < b->GlobalGoal); }
 
 std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector<node*> node_map,const map& current_map){
-
+    if (get_map_site(x1, y1, current_map).hard or get_map_site(x2, y2, current_map).hard){
+        return {};
+    }
     int len = node_map.size();
     for (int i = 0; i < len; i++){
         node_map[i]->GlobalGoal = 1000;
@@ -109,6 +111,9 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
 
     std::vector<std::vector<int>> path;
     current_node = node_map[(current_map.map_width) * y2 + x2];
+    if (current_node->Parent == nullptr){
+        return {};
+    }
     while (true){
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
 
@@ -121,6 +126,7 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
         }
     }
     std::reverse(path.begin(), path.end());
+
     return path;
 }
 

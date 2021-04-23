@@ -5,6 +5,11 @@
 #ifndef CHARACTERS_H
 #define CHARACTERS_H
 
+#include "maps.h"
+struct actions{
+    std::vector<int> walk;
+    bool shout = false;
+};
 struct character{
     std::string name;
     int loc_x = 10;
@@ -17,6 +22,8 @@ struct character{
     int facing = 1;
     float owntime = 0;
     std::vector<std::vector<int>> path;
+    float sight_range = 3;
+    bool seen = true;
 
 };
 
@@ -96,6 +103,26 @@ void walk_path(character* person, map& current_map, entities& people) {
             }
         }
     }
+}
+
+bool can_A_see_B(character* a, character* b, map main_map){
+    bool visible = true;
+    double r_dist = sqrt(pow((a->loc_x - b->loc_x),2) + pow((a->loc_y - b->loc_y), 2));
+    int x, y;
+    float theta =  atan2(a->loc_y - b->loc_y, a->loc_x - b->loc_x);
+    if (r_dist > a->sight_range) {
+        visible = false;
+        return visible;
+    }
+    for (int i = 0; i <= r_dist; i++){
+        x = (int) round(i * cos((theta)) + b->loc_x);
+        y = (int) round(i * sin((theta)) + b->loc_y);
+        if (get_map_site(x, y, main_map).opaque) {
+            visible = false;
+            return visible;
+        }
+    }
+    return visible;
 }
 
 
