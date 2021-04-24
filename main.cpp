@@ -85,7 +85,8 @@ public:
         std::vector<std::vector<int>> path;
         path = PATHFINDING_H::A_star(4, 5, 0, 0, node_map, current_map);
 
-        warrior_m.path = path;
+
+        set_walking(&warrior_m, path);
         warrior_m.name = "warrior";
         warrior_m.loc_y = 5;
         warrior_m.loc_x = 4;
@@ -112,7 +113,7 @@ public:
         for (auto  & i : people.all_enemies_list){i->seen = false;}
         for (auto & i : people.all_char_list){
             i->owntime+=fElapsedTime;
-            walk_path(i, current_map, people);
+            do_actions(i, current_map, people);
         }
 
         if (GetKey(olc::Key::LEFT).bPressed) {

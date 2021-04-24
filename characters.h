@@ -22,7 +22,7 @@ struct character{
     float speed = 2;
     int facing = 1;
     float owntime = 0;
-    std::vector<std::vector<int>> path;
+    std::vector<actions*> action;
     float sight_range = 3;
     bool seen = true;
 
@@ -46,61 +46,65 @@ bool isWalkable(int x , int y, const map& current_map, const entities& people){
     return true;
 }
 
-void walk_path(character* person, map& current_map, entities& people) {
-    if (person->owntime > person->speed and !person->path.empty()) {
+void do_actions(character* person, map& current_map, entities& people) {
+    if (person->owntime > person->speed and !person->action.empty()) {
         person->owntime = 0;
 
-        if (person->loc_x > person->path[0][0] and person->loc_y == person->path[0][1]) {
-            person->facing = 3;
-            if (isWalkable(person->path[0][0], person->path[0][1], current_map, people)) {
-                person->loc_x = person->path[0][0];
-                person->step++;
-                person->path.erase(person->path.begin());
-                if (person->step == 2) {
-                    person->step = 0;
-                }
-                return;
-            }
+        if (!person->action[0]->shout){
+            std::cout<< "Over here!!!" << std::endl;
         }
-
-        if (person->loc_x < person->path[0][0] and person->loc_y == person->path[0][1]) {
-            person->facing = 1;
-            if (isWalkable(person->path[0][0], person->path[0][1], current_map, people)) {
-                person->loc_x = person->path[0][0];
-                person->step++;
-                person->path.erase(person->path.begin());
-
-                if (person->step == 2) {
-                    person->step = 0;
+        if (!person->action[0]->walk.empty()) {
+            if (person->loc_x > person->action[0]->walk[0] and person->loc_y == person->action[0]->walk[1]) {
+                person->facing = 3;
+                if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
+                    person->loc_x = person->action[0]->walk[0];
+                    person->step++;
+                    person->action.erase(person->action.begin());
+                    if (person->step == 2) {
+                        person->step = 0;
+                    }
+                    return;
                 }
-                return;
             }
-        }
 
-        if (person->loc_x == person->path[0][0] and person->loc_y > person->path[0][1]) {
-            person->facing = 0;
-            if (isWalkable(person->path[0][0], person->path[0][1], current_map, people)) {
-                person->loc_y = person->path[0][1];
-                person->step++;
-                person->path.erase(person->path.begin());
+            if (person->loc_x < person->action[0]->walk[0] and person->loc_y == person->action[0]->walk[1]) {
+                person->facing = 1;
+                if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
+                    person->loc_x = person->action[0]->walk[0];
+                    person->step++;
+                    person->action.erase(person->action.begin());
 
-                if (person->step == 2) {
-                    person->step = 0;
+                    if (person->step == 2) {
+                        person->step = 0;
+                    }
+                    return;
                 }
-                return;
             }
-        }
-        if (person->loc_x == person->path[0][0] and person->loc_y < person->path[0][1]) {
-            person->facing = 2;
-            if (isWalkable(person->path[0][0], person->path[0][1], current_map, people)) {
-                person->loc_y = person->path[0][1];
-                person->step++;
-                person->path.erase(person->path.begin());
 
-                if (person->step == 2) {
-                    person->step = 0;
+            if (person->loc_x == person->action[0]->walk[0] and person->loc_y > person->action[0]->walk[1]) {
+                person->facing = 0;
+                if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
+                    person->loc_y = person->action[0]->walk[1];
+                    person->step++;
+                    person->action.erase(person->action.begin());
+
+                    if (person->step == 2) {
+                        person->step = 0;
+                    }
+                    return;
                 }
-                return;
+            }
+            if (person->loc_x == person->action[0]->walk[0] and person->loc_y < person->action[0]->walk[1]) {
+                person->facing = 2;
+                if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
+                    person->loc_y = person->action[0]->walk[1];
+                    person->step++;
+                    person->action.erase(person->action.begin());
+                    if (person->step == 2) {
+                        person->step = 0;
+                    }
+                    return;
+                }
             }
         }
     }
@@ -124,6 +128,14 @@ bool can_A_see_B(character* a, character* b, map main_map){
         }
     }
     return visible;
+}
+
+void set_walking(character* person, std::vector<std::vector<int>> path){
+    for (int i = 0; i < person->speed * 10; i++){
+        actions* act = new actions;
+        act->walk = path[i];
+        person->action.push_back(act);
+    }
 }
 
 
