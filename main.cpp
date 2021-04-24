@@ -108,11 +108,12 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
+
         for (auto  & i : people.all_enemies_list){i->seen = false;}
-        for (auto & i : people.all_char_list){i->owntime+=fElapsedTime;}
-
-        for (auto & i : people.all_char_list){walk_path(i, current_map, people);}
-
+        for (auto & i : people.all_char_list){
+            i->owntime+=fElapsedTime;
+            walk_path(i, current_map, people);
+        }
 
         if (GetKey(olc::Key::LEFT).bPressed) {
             people.all_allies_list[active_character]->facing = 3;

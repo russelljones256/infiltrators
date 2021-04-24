@@ -1,4 +1,3 @@
-//
 // Created by russell on 15/04/2021.
 //
 //void draw_map(const map& current_map){

@@ -10,6 +10,7 @@ struct actions{
     std::vector<int> walk;
     bool shout = false;
 };
+
 struct character{
     std::string name;
     int loc_x = 10;

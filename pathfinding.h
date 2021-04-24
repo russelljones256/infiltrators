@@ -101,14 +101,8 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
 
         } else {
             current_node = nodes_to_test[0];
-
         }
-
-
-
     }
-
-
     std::vector<std::vector<int>> path;
     current_node = node_map[(current_map.map_width) * y2 + x2];
     if (current_node->Parent == nullptr){
