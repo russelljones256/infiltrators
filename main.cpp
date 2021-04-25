@@ -159,7 +159,6 @@ public:
                     active_character = 0;
                 }
             }
-
             for (auto &i : people.all_allies_list){i->act_remaining = i->speed * 10 - i->action.size();}
             bool finished = true;
             for (auto &i : people.all_allies_list) {
