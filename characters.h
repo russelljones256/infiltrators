@@ -19,13 +19,17 @@ struct character{
     std::unique_ptr<olc::Decal> decal;
     std::vector<std::vector<int>> path_list;
     int step = 0;
-    float speed = 2;
+    float speed = 1;
     int facing = 1;
     float owntime = 0;
     std::vector<actions*> action;
     float sight_range = 3;
     bool seen = true;
-    int act_remaining;
+    int act_remaining = 0;
+    int ghost_loc_x = 10;
+    int ghost_loc_y = 10;
+    int dest_x = 0;
+    int dest_y = 0;
 
 };
 

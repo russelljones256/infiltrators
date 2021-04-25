@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <tuple>
 #include <unistd.h>
-
+#include "iomanip"
 
 class Infiltrators : public olc::PixelGameEngine {
 public:
@@ -47,6 +47,10 @@ private:
     }
 
     void update_hud(entities people, int active_character){
+        DrawStringDecal(olc::vi2d(10*32, 0), std::to_string((int)std::floor(master_clock)) + " seconds");
+        DrawStringDecal(olc::vi2d(10, 0), gamemode);
+
+        // for (auto &i : people.all_allies_list[0]->action){std::cout << i->walk[0] << "  " << i->walk[1] << std::endl;}
         for (int i = 0; i< people.all_allies_list.size(); i++){
             if (i == active_character){
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - 5 * 32, ScreenHeight() * 0.15),
@@ -77,22 +81,23 @@ private:
     character warrior_m;
     entities people;
     float turn_clock = 0;
+    float master_clock = 0;
 
     map current_map = MAPS_H::map_process("assets/maps/basic.map");
-
+    std::vector<node*> node_map;
 
 
 
 
 public:
     bool OnUserCreate() override {
-        std::vector<node*> node_map = PATHFINDING_H::Generate_nodes_map(current_map);
+        node_map = PATHFINDING_H::Generate_nodes_map(current_map);
         std::vector<std::vector<int>> path;
-        path = PATHFINDING_H::A_star(4, 5, 0, 0, node_map, current_map);
-
+        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
+        for (auto &i : path){std::cout << i[0] << " " << i[1] << std::endl;}
 
         set_walking(&warrior_m, path);
-        warrior_m.name = "warrior";
+        warrior_m.name = "Warrior";
         warrior_m.loc_y = 5;
         warrior_m.loc_x = 4;
         ranger_f.name = "Ranger";
@@ -114,17 +119,20 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
-        DrawStringDecal(olc::vi2d(10*32, 0), std::to_string(turn_clock));
-
 
         if (gamemode == "realtime") {
+            for (auto &i : people.all_allies_list){
+                i->ghost_loc_x = i->loc_x;
+                i->ghost_loc_y = i->loc_y;
+            }
+
             turn_clock += fElapsedTime;
+            master_clock += fElapsedTime;
             if (turn_clock > 10){
                 turn_clock = 0;
-                for (auto &i : people.all_allies_list){i->action = {};}
+                for (auto &i : people.all_char_list){i->action = {};}
                 gamemode = "command";
             }
-            DrawStringDecal(olc::vi2d(10, 0), "realtime");
 
             for (auto &i : people.all_enemies_list) { i->seen = false; }
 
@@ -134,31 +142,38 @@ public:
             }
 
         }else if (gamemode == "command"){
-            DrawStringDecal(olc::vi2d(10, 0), "command");
+
             if (GetKey(olc::Key::LEFT).bPressed) {
+                people.all_allies_list[active_character]-> ghost_loc_x  -= 1;
                 actions* act = new actions;
-                act->walk = {people.all_allies_list[active_character]->loc_x - 1, people.all_allies_list[active_character]->loc_y};
+                act->walk = {people.all_allies_list[active_character]->ghost_loc_x, people.all_allies_list[active_character]->ghost_loc_y};
                 people.all_allies_list[active_character]->action.push_back(act);
 
             }else if (GetKey(olc::Key::RIGHT).bPressed) {
+                people.all_allies_list[active_character]-> ghost_loc_x += 1;
                 actions* act = new actions;
-                act->walk = {people.all_allies_list[active_character]->loc_x + 1, people.all_allies_list[active_character]->loc_y};
+                act->walk = {people.all_allies_list[active_character]->ghost_loc_x, people.all_allies_list[active_character]->ghost_loc_y};
                 people.all_allies_list[active_character]->action.push_back(act);
 
             }else if (GetKey(olc::Key::DOWN).bPressed) {
+                people.all_allies_list[active_character]-> ghost_loc_y += 1;
                 actions* act = new actions;
-                act->walk = {people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y + 1};
+                act->walk = {people.all_allies_list[active_character]->ghost_loc_x, people.all_allies_list[active_character]->ghost_loc_y};
                 people.all_allies_list[active_character]->action.push_back(act);
+
             }else if (GetKey(olc::Key::UP).bPressed) {
+                people.all_allies_list[active_character]-> ghost_loc_y -= 1;
                 actions* act = new actions;
-                act->walk = {people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y - 1};
+                act->walk = {people.all_allies_list[active_character]->ghost_loc_x, people.all_allies_list[active_character]->ghost_loc_y};
                 people.all_allies_list[active_character]->action.push_back(act);
+
             }else if (GetKey(olc::Key::TAB).bPressed) {
                 active_character++;
                 if (active_character == people.all_allies_list.size()) {
                     active_character = 0;
                 }
             }
+
             for (auto &i : people.all_allies_list){i->act_remaining = i->speed * 10 - i->action.size();}
             bool finished = true;
             for (auto &i : people.all_allies_list) {
@@ -169,6 +184,7 @@ public:
             }
             if (finished){
                 gamemode = "realtime";
+                set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
 
             }else if (people.all_allies_list[active_character]->act_remaining == 0) {
                 active_character++;
