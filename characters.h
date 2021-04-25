@@ -25,6 +25,7 @@ struct character{
     std::vector<actions*> action;
     float sight_range = 3;
     bool seen = true;
+    int act_remaining;
 
 };
 
@@ -50,7 +51,7 @@ void do_actions(character* person, map& current_map, entities& people) {
     if (person->owntime > person->speed and !person->action.empty()) {
         person->owntime = 0;
 
-        if (!person->action[0]->shout){
+        if (person->action[0]->shout){
             std::cout<< "Over here!!!" << std::endl;
         }
         if (!person->action[0]->walk.empty()) {

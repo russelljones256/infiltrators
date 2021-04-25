@@ -53,9 +53,12 @@ private:
                                  people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 60 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36), {2.5f, 2.5f});
 
                 DrawStringDecal(olc::vi2d(ScreenWidth() - 5.5 * 32, ScreenHeight() * 0.05), people.all_allies_list[i]->name,olc::DARK_CYAN, {3.0f, 3.0f});
+                DrawStringDecal(olc::vi2d(ScreenWidth() - 6 * 32, ScreenHeight() * 0.4), std::to_string(people.all_allies_list[i]->act_remaining),olc::DARK_CYAN, {2.0f, 2.0f});
             }else{
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - (6 - i) * 32 , ScreenHeight() * 0.57),
                                  people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 60 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36));
+                DrawStringDecal(olc::vi2d(ScreenWidth() - (6 - i) * 32 + 10 , ScreenHeight() * 0.65),
+                                 std::to_string(people.all_allies_list[i]->act_remaining), olc::DARK_CYAN);
             }
         }
         for (int i = 0; i< people.all_enemies_list.size(); i++)
@@ -73,6 +76,8 @@ private:
     character mage_m;
     character warrior_m;
     entities people;
+    float turn_clock = 0;
+
     map current_map = MAPS_H::map_process("assets/maps/basic.map");
 
 
@@ -109,51 +114,71 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
+        DrawStringDecal(olc::vi2d(10*32, 0), std::to_string(turn_clock));
 
-        for (auto  & i : people.all_enemies_list){i->seen = false;}
-        for (auto & i : people.all_char_list){
-            i->owntime+=fElapsedTime;
-            do_actions(i, current_map, people);
-        }
 
-        if (GetKey(olc::Key::LEFT).bPressed) {
-            people.all_allies_list[active_character]->facing = 3;
-            if (isWalkable(people.all_allies_list[active_character]->loc_x -1, people.all_allies_list[active_character]->loc_y, current_map, people)) {
-                people.all_allies_list[active_character]->loc_x -= 1;
-                people.all_allies_list[active_character]->step++;
+        if (gamemode == "realtime") {
+            turn_clock += fElapsedTime;
+            if (turn_clock > 10){
+                turn_clock = 0;
+                for (auto &i : people.all_allies_list){i->action = {};}
+                gamemode = "command";
+            }
+            DrawStringDecal(olc::vi2d(10, 0), "realtime");
+
+            for (auto &i : people.all_enemies_list) { i->seen = false; }
+
+            for (auto &i : people.all_char_list) {
+                i->owntime += fElapsedTime;
+                do_actions(i, current_map, people);
+            }
+
+        }else if (gamemode == "command"){
+            DrawStringDecal(olc::vi2d(10, 0), "command");
+            if (GetKey(olc::Key::LEFT).bPressed) {
+                actions* act = new actions;
+                act->walk = {people.all_allies_list[active_character]->loc_x - 1, people.all_allies_list[active_character]->loc_y};
+                people.all_allies_list[active_character]->action.push_back(act);
+
+            }else if (GetKey(olc::Key::RIGHT).bPressed) {
+                actions* act = new actions;
+                act->walk = {people.all_allies_list[active_character]->loc_x + 1, people.all_allies_list[active_character]->loc_y};
+                people.all_allies_list[active_character]->action.push_back(act);
+
+            }else if (GetKey(olc::Key::DOWN).bPressed) {
+                actions* act = new actions;
+                act->walk = {people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y + 1};
+                people.all_allies_list[active_character]->action.push_back(act);
+            }else if (GetKey(olc::Key::UP).bPressed) {
+                actions* act = new actions;
+                act->walk = {people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y - 1};
+                people.all_allies_list[active_character]->action.push_back(act);
+            }else if (GetKey(olc::Key::TAB).bPressed) {
+                active_character++;
+                if (active_character == people.all_allies_list.size()) {
+                    active_character = 0;
+                }
+            }
+
+            for (auto &i : people.all_allies_list){i->act_remaining = i->speed * 10 - i->action.size();}
+            bool finished = true;
+            for (auto &i : people.all_allies_list) {
+                if (i->act_remaining > 0){
+                    finished = false;
+                    break;
+                }
+            }
+            if (finished){
+                gamemode = "realtime";
+
+            }else if (people.all_allies_list[active_character]->act_remaining == 0) {
+                active_character++;
+                if (active_character == people.all_allies_list.size()) {
+                    active_character = 0;
+                }
             }
         }
 
-        if (GetKey(olc::Key::RIGHT).bPressed) {
-            people.all_allies_list[active_character]->facing = 1;
-            if (isWalkable(people.all_allies_list[active_character]->loc_x + 1, people.all_allies_list[active_character]->loc_y, current_map, people)) {
-                people.all_allies_list[active_character]->loc_x += 1;
-                people.all_allies_list[active_character]->step++;
-            }
-        }
-
-        if (GetKey(olc::Key::DOWN).bPressed) {
-            people.all_allies_list[active_character]->facing = 2;
-            if (isWalkable(people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y + 1, current_map, people)) {
-                people.all_allies_list[active_character]->loc_y += 1;
-                people.all_allies_list[active_character]->step++;
-            }
-        }
-
-        if (GetKey(olc::Key::UP).bPressed) {
-            people.all_allies_list[active_character]->facing = 0;
-            if (isWalkable(people.all_allies_list[active_character]->loc_x, people.all_allies_list[active_character]->loc_y - 1, current_map, people)) {
-                people.all_allies_list[active_character]->loc_y -= 1;
-                people.all_allies_list[active_character]->step++;
-            }
-        }
-
-        if (GetKey(olc::Key::TAB).bPressed){
-            active_character++;
-            if (active_character == people.all_allies_list.size()){
-                active_character = 0;
-            }
-        }
         for (auto & i : people.all_enemies_list){
             for (auto & j : people.all_allies_list){
                 if (can_A_see_B(j, i, current_map)){
