@@ -91,20 +91,22 @@ private:
 
 public:
     bool OnUserCreate() override {
-        node_map = PATHFINDING_H::Generate_nodes_map(current_map);
-        std::vector<std::vector<int>> path;
-        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
-        for (auto &i : path){std::cout << i[0] << " " << i[1] << std::endl;}
 
-        set_walking(&warrior_m, path);
         warrior_m.name = "Warrior";
         warrior_m.loc_y = 5;
         warrior_m.loc_x = 4;
-        ranger_f.name = "Ranger";
-        mage_m.name = "Mage";
-        ranger_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ranger_f.png").get());
-        mage_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/mage_m.png").get());
+        warrior_m.dest_y = 0;
+        warrior_m.dest_x = 0;
         warrior_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_m.png").get());
+
+        ranger_f.name = "Ranger";
+        ranger_f.loc_y = 11;
+        ranger_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ranger_f.png").get());
+
+        mage_m.name = "Mage";
+        mage_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/mage_m.png").get());
+        node_map = PATHFINDING_H::Generate_nodes_map(current_map);
+        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
         people.all_char_list.push_back(&ranger_f);
         people.all_allies_list.push_back(&ranger_f);
         people.all_char_list.push_back(&mage_m);
@@ -120,17 +122,19 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
 
+
         if (gamemode == "realtime") {
             for (auto &i : people.all_allies_list){
                 i->ghost_loc_x = i->loc_x;
                 i->ghost_loc_y = i->loc_y;
+
             }
 
             turn_clock += fElapsedTime;
             master_clock += fElapsedTime;
             if (turn_clock > 10){
                 turn_clock = 0;
-                for (auto &i : people.all_char_list){i->action = {};}
+                for (auto &i : people.all_allies_list){i->action = {};}
                 gamemode = "command";
             }
 
@@ -184,7 +188,8 @@ public:
             }
             if (finished){
                 gamemode = "realtime";
-                set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
+                active_character = 0;
+// set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
 
             }else if (people.all_allies_list[active_character]->act_remaining == 0) {
                 active_character++;

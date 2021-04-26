@@ -64,6 +64,7 @@ void do_actions(character* person, map& current_map, entities& people) {
                 if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
                     person->loc_x = person->action[0]->walk[0];
                     person->step++;
+                    delete person->action[0];
                     person->action.erase(person->action.begin());
                     if (person->step == 2) {
                         person->step = 0;
@@ -77,6 +78,8 @@ void do_actions(character* person, map& current_map, entities& people) {
                 if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
                     person->loc_x = person->action[0]->walk[0];
                     person->step++;
+                    delete person->action[0];
+
                     person->action.erase(person->action.begin());
 
                     if (person->step == 2) {
@@ -91,6 +94,8 @@ void do_actions(character* person, map& current_map, entities& people) {
                 if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
                     person->loc_y = person->action[0]->walk[1];
                     person->step++;
+                    delete person->action[0];
+
                     person->action.erase(person->action.begin());
 
                     if (person->step == 2) {
@@ -104,6 +109,8 @@ void do_actions(character* person, map& current_map, entities& people) {
                 if (isWalkable(person->action[0]->walk[0], person->action[0]->walk[1], current_map, people)) {
                     person->loc_y = person->action[0]->walk[1];
                     person->step++;
+                    delete person->action[0];
+
                     person->action.erase(person->action.begin());
                     if (person->step == 2) {
                         person->step = 0;
@@ -136,12 +143,14 @@ bool can_A_see_B(character* a, character* b, map main_map){
 }
 
 void set_walking(character* person, std::vector<std::vector<int>> path){
-    for (int i = 0; i < person->speed * 10; i++){
+    for (auto &i : path){
         actions* act = new actions;
-        act->walk = path[i];
+        act->walk = i;
         person->action.push_back(act);
     }
 }
+
+
 
 
 
