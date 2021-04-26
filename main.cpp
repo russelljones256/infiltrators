@@ -54,13 +54,13 @@ private:
         for (int i = 0; i< people.all_allies_list.size(); i++){
             if (i == active_character){
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - 5 * 32, ScreenHeight() * 0.15),
-                                 people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 60 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36), {2.5f, 2.5f});
+                                 people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 62 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36), {2.5f, 2.5f});
 
                 DrawStringDecal(olc::vi2d(ScreenWidth() - 5.5 * 32, ScreenHeight() * 0.05), people.all_allies_list[i]->name,olc::DARK_CYAN, {3.0f, 3.0f});
                 DrawStringDecal(olc::vi2d(ScreenWidth() - 6 * 32, ScreenHeight() * 0.4), std::to_string(people.all_allies_list[i]->act_remaining),olc::DARK_CYAN, {2.0f, 2.0f});
             }else{
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - (6 - i) * 32 , ScreenHeight() * 0.57),
-                                 people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 60 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36));
+                                 people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 62 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36));
                 DrawStringDecal(olc::vi2d(ScreenWidth() - (6 - i) * 32 + 10 , ScreenHeight() * 0.65),
                                  std::to_string(people.all_allies_list[i]->act_remaining), olc::DARK_CYAN);
             }
@@ -69,7 +69,7 @@ private:
         {
 
             DrawPartialDecal(olc::vi2d(ScreenWidth() - 32 * (2 + (4 - i) % 5), ScreenHeight() * (0.77 + (0.1 * std::floor(i / 4)))),
-                             people.all_enemies_list[i]->decal.get(), olc::vi2d(2 + 60 * people.all_enemies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36));
+                             people.all_enemies_list[i]->decal.get(), olc::vi2d(2 + 62 * people.all_enemies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36));
 
             }
         }
@@ -105,8 +105,7 @@ public:
 
         mage_m.name = "Mage";
         mage_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/mage_m.png").get());
-        node_map = PATHFINDING_H::Generate_nodes_map(current_map);
-        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
+
         people.all_char_list.push_back(&ranger_f);
         people.all_allies_list.push_back(&ranger_f);
         people.all_char_list.push_back(&mage_m);
@@ -114,6 +113,8 @@ public:
         people.all_char_list.push_back(&warrior_m);
         people.all_enemies_list.push_back(&warrior_m);
 
+        node_map = PATHFINDING_H::Generate_nodes_map(current_map);
+        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
         draw_map(current_map);
         draw_hud(current_map);
         return true;
@@ -210,7 +211,7 @@ public:
         for (auto & i : people.all_char_list) {
             if (i->seen) {
                 DrawPartialDecal(olc::vi2d(i->loc_x, i->loc_y) * 32,
-                                 i->decal.get(), olc::vi2d(2 + 60 * i->step, 2 + 36 * i->facing), olc::vi2d(28, 36));
+                                 i->decal.get(), olc::vi2d(2 + 62 * i->step, 2 + 36 * i->facing), olc::vi2d(28, 36));
                 if (people.all_char_list[active_character]->step == 2) {
                     people.all_char_list[active_character]->step = 0;
                 }
