@@ -16,6 +16,7 @@ struct actions{
 };
 
 struct character{
+    bool on_route = false;
     std::string name;
     int loc_x = 10;
     int loc_y = 10;
@@ -32,8 +33,14 @@ struct character{
     int act_remaining = 0;
     int ghost_loc_x;
     int ghost_loc_y;
-    int dest_x = 0;
-    int dest_y = 0;
+    int dest_x;
+    int dest_y;
+    int pat1_x = 0;
+    int pat1_y = 0;
+    int pat2_x = 10;
+    int pat2_y = 0;
+    int dir = 1;
+
 
 };
 
@@ -97,17 +104,40 @@ bool can_A_hear_B(character* a, character* b, map main_map){
 
 
 void set_walking(character* person, std::vector<std::vector<int>> path){
-    std::cout << "Warrior is at: "<<person->loc_x << " "<< person->loc_y<< std::endl;
     for (int i = 0; i < person->action.size(); i++){
         delete person->action[i];
     }
     person->action = {};
 
     for (auto &i : path){
-        std::cout << "path: "<< i[0] << " " << i[1] << std::endl;
         actions* act = new actions;
         act->walk = i;
         person->action.push_back(act);
+    }
+}
+
+void patrol(int x1, int y1, int x2, int y2, character* person, std::vector<node*> node_map, map& current_map){
+    if ((person->loc_x == person->pat1_x and person->loc_y == person->pat1_y) or (person->loc_x == person->pat2_x and person->pat2_y)){
+        if (person->on_route) {
+            person->dir = person->dir * -1;
+            std::cout << "test1" << std::endl;
+        }
+        if (person->action.size() == 0){person->on_route = true;}
+    }
+
+    if (!person->on_route){
+        if (person->action.size() == 0){
+            std::cout << "test2" << std::endl;
+            set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat1_x, person->pat1_y, node_map, current_map));
+        }
+    }else if (person->dir == 1){
+        std::cout << "test3" << std::endl;
+
+        set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat2_x, person->pat2_y, node_map, current_map));
+    }else if (person->dir == -1){
+        std::cout << "test4" << std::endl;
+
+        set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat1_x, person->pat1_y, node_map, current_map));
     }
 }
 void do_actions(character* person, map& current_map, entities& people, std::vector<node*> node_map) {
@@ -121,13 +151,14 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
         }
 
         if (person->action[0]->shout){
-            std::cout<< "Over here!!!" << std::endl;
             for (auto &i : people.all_enemies_list){
                 if (can_A_hear_B(i, person, current_map)){
                     std::vector<std::vector<int>> path = {};
-                    std::cout << "Warrior position a: " << i->loc_x << " " << i->loc_y << std::endl;
-                    path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, person->loc_x, person->loc_y, node_map, current_map);
-                    set_walking(i, path) ;
+                    i->dest_x = person->loc_x;
+                    i->dest_y = person->loc_y;
+                    path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, i->dest_x, i->dest_y, node_map, current_map);
+                    set_walking(i, path);
+                    i->on_route = false;
                     break;
                 }
             }
@@ -201,6 +232,7 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
                     return;
                 }
             }
+            if (person->action.size() == 0){person->on_route = true;}
         }
     }
 }

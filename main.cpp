@@ -50,7 +50,6 @@ private:
         DrawStringDecal(olc::vi2d(10*32, 0), std::to_string((int)std::floor(master_clock)) + " seconds");
         DrawStringDecal(olc::vi2d(10, 0), gamemode);
 
-        // for (auto &i : people.all_allies_list[0]->action){std::cout << i->walk[0] << "  " << i->walk[1] << std::endl;}
         for (int i = 0; i< people.all_allies_list.size(); i++){
             if (i == active_character){
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - 5 * 32, ScreenHeight() * 0.15),
@@ -91,8 +90,14 @@ public:
     bool OnUserCreate() override {
 
         warrior_m.name = "Warrior";
-        warrior_m.loc_y = 5;
         warrior_m.loc_x = 10;
+
+        warrior_m.loc_y = 5;
+        warrior_m.pat1_x =  15;
+        warrior_m.pat1_y = 5;
+        warrior_m.pat2_x = 20;
+        warrior_m.pat2_y = 5;
+
         warrior_m.dest_y = 0;
         warrior_m.dest_x = 0;
         warrior_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_m.png").get());
@@ -129,6 +134,8 @@ public:
 
             turn_clock += fElapsedTime;
             master_clock += fElapsedTime;
+            for (auto &i : people.all_enemies_list){patrol(i->pat1_x, i->pat1_y, i->pat2_x, i->pat2_y,i, node_map, current_map);}
+
             if (turn_clock > 10){
                 turn_clock = 0;
                 for (auto &i : people.all_allies_list){i->action = {};}
