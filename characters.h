@@ -137,7 +137,8 @@ void patrol(int x1, int y1, int x2, int y2, character* person, std::vector<node*
     }
 }
 void do_actions(character* person, map& current_map, entities& people, std::vector<node*> node_map) {
-    if (person->owntime > person->speed and !person->action.empty()) {
+
+    if (person->owntime > 1 / person->speed and !person->action.empty()) {
         person->owntime = 0;
 
         if (person->action[0]->pass){
@@ -154,6 +155,13 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
                     i->dest_y = person->loc_y;
                     path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, i->dest_x, i->dest_y, node_map, current_map);
                     set_walking(i, path);
+                    actions* act = new actions;
+                    act->pass = true;
+                    i->action.push_back(act);
+                    actions* act2 = new actions;
+                    act2->pass = true;
+                    i->action.push_back(act2);
+
                     i->on_route = false;
                     break;
                 }

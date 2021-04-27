@@ -76,8 +76,12 @@ private:
     int active_character = 0;
     std::string gamemode = "realtime";
     character ranger_f;
+    character ranger_m;
     character mage_m;
     character warrior_m;
+    character ninja_m;
+    character ninja_f;
+    character warrior_f;
     entities people;
     float turn_clock = 0;
     float master_clock = 0;
@@ -90,23 +94,52 @@ public:
     bool OnUserCreate() override {
 
         warrior_m.name = "Warrior";
-        warrior_m.loc_x = 10;
-
-        warrior_m.loc_y = 5;
-        warrior_m.pat1_x =  15;
-        warrior_m.pat1_y = 5;
-        warrior_m.pat2_x = 20;
-        warrior_m.pat2_y = 5;
-
-        warrior_m.dest_y = 0;
-        warrior_m.dest_x = 0;
+        warrior_m.loc_x = 20;
+        warrior_m.loc_y = 7;
+        warrior_m.pat1_x =  18;
+        warrior_m.pat1_y = 7;
+        warrior_m.pat2_x = 24;
+        warrior_m.pat2_y = 7;
+        warrior_m.speed = 1.55;
+        warrior_m.sight_range = 4;
         warrior_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_m.png").get());
 
+        warrior_f.loc_y = 5;
+        warrior_f.pat1_x =  22;
+        warrior_f.pat1_y = 5;
+        warrior_f.pat2_x = 29;
+        warrior_f.pat2_y = 5;
+        warrior_f.sight_range = 4;
+        warrior_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_f.png").get());
+
+        ninja_m.loc_y = 5;
+        ninja_m.pat1_x =  15;
+        ninja_m.pat1_y = 5;
+        ninja_m.pat2_x = 20;
+        ninja_m.pat2_y = 5;
+        ninja_m.sight_range = 4;
+        ninja_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ninja_m.png").get());
+
+        ninja_f.loc_y = 5;
+        ninja_f.pat1_x =  15;
+        ninja_f.pat1_y = 20;
+        ninja_f.pat2_x = 20;
+        ninja_f.pat2_y = 5;
+        ninja_f.sight_range = 4;
+        ninja_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ninja_f.png").get());
+
         ranger_f.name = "Ranger";
-        ranger_f.loc_y = 11;
+        ranger_f.loc_x = 21;
+        ranger_f.loc_y = 16;
+        ranger_f.speed = 1.5;
+        ranger_f.sight_range = 9;
         ranger_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ranger_f.png").get());
 
         mage_m.name = "Mage";
+        mage_m.loc_y = 13;
+        mage_m.loc_x = 21;
+        mage_m.speed = 1;
+        mage_m.sight_range = 5;
         mage_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/mage_m.png").get());
 
         people.all_char_list.push_back(&ranger_f);
@@ -124,9 +157,28 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
+        int vict_sites = 0;
+        for (auto &i : people.all_allies_list){
+            if (get_map_site(i->loc_x, i->loc_y, current_map).name == "grass"){
+                vict_sites ++;
+            }
+        }
+        if (vict_sites == people.all_allies_list.size()){
+            DrawString(olc::vi2d(10,10), "You Won! Well done!", olc::YELLOW, 5);
+            gamemode = "Victory";
+        }
 
+        for (auto &i : people.all_enemies_list){
+            for (auto &j : people.all_allies_list){
+                if ((abs(j->loc_y - i->loc_y) <= 1 and abs(j->loc_x - i->loc_x) == 0) or (abs(j->loc_y - i->loc_y) == 0 and abs(j->loc_x - i->loc_x) <= 1)){
+                    DrawString(olc::vi2d(10,10), "Game over-Refresh page to replay", olc::DARK_RED, 5);
+                    gamemode = "lost";
+                }
+            }
+        }
 
         if (gamemode == "realtime") {
+
             for (auto &i : people.all_allies_list){
                 i->ghost_loc_x = i->loc_x;
                 i->ghost_loc_y = i->loc_y;
@@ -136,6 +188,13 @@ public:
             master_clock += fElapsedTime;
             for (auto &i : people.all_enemies_list){patrol(i->pat1_x, i->pat1_y, i->pat2_x, i->pat2_y,i, node_map, current_map);}
 
+            for (auto &i : people.all_enemies_list){
+                for (auto &j : people.all_allies_list){
+                    if (can_A_see_B(i, j, current_map)){
+                        set_walking(i, PATHFINDING_H::A_star(i->loc_x, i->loc_y, j->loc_x, j->loc_y, node_map, current_map));
+                    }
+                }
+            }
             if (turn_clock > 10){
                 turn_clock = 0;
                 for (auto &i : people.all_allies_list){i->action = {};}
