@@ -43,6 +43,7 @@ private:
         FillRect(ScreenWidth() - 10, 0, 10, ScreenHeight(), olc::DARK_GREEN);
         DrawString(olc::vi2d(ScreenWidth() - 6 * 32, 0.53 * ScreenHeight()), "Squadmates", olc::DARK_CYAN,2);
         DrawString(olc::vi2d(ScreenWidth() - 6.5 * 32, 0.73 * ScreenHeight()), "Seen Enemies", olc::DARK_CYAN,2);
+        DrawString(olc::vi2d(ScreenWidth() - 6.5 * 32, 0.95 * ScreenHeight()), "Help -> h", olc::WHITE,2);
 
     }
 
@@ -157,6 +158,17 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         update_hud(people, active_character);
+
+        if (GetKey(olc::Key::H).bHeld){
+            DrawStringDecal(olc::vi2d(10, 10 ), "Rescue the Mage. Get the ranger and the mage to the grass. Dont get caught!", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(320, 320 ), "Controls:", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(320, 420 ), "S -> Scry (Only Mage, costs 10 actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(320, 520 ), "Y -> Yell (All characters, costs 2 actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(320, 620 ), ". -> Wait (All characters, costs 1 actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(320, 720 ), "Arrow keys -> Move (All characters, costs 1 action)", olc::WHITE, {2.0f, 2.0f});
+
+        }
+
         int vict_sites = 0;
         for (auto &i : people.all_allies_list){
             if (get_map_site(i->loc_x, i->loc_y, current_map).name == "grass"){
