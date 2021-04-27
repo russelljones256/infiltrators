@@ -120,22 +120,18 @@ void patrol(int x1, int y1, int x2, int y2, character* person, std::vector<node*
     if ((person->loc_x == person->pat1_x and person->loc_y == person->pat1_y) or (person->loc_x == person->pat2_x and person->pat2_y)){
         if (person->on_route) {
             person->dir = person->dir * -1;
-            std::cout << "test1" << std::endl;
         }
         if (person->action.size() == 0){person->on_route = true;}
     }
 
     if (!person->on_route){
         if (person->action.size() == 0){
-            std::cout << "test2" << std::endl;
             set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat1_x, person->pat1_y, node_map, current_map));
         }
     }else if (person->dir == 1){
-        std::cout << "test3" << std::endl;
 
         set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat2_x, person->pat2_y, node_map, current_map));
     }else if (person->dir == -1){
-        std::cout << "test4" << std::endl;
 
         set_walking(person, PATHFINDING_H::A_star(person->loc_x, person->loc_y, person->pat1_x, person->pat1_y, node_map, current_map));
     }
