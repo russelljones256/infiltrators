@@ -125,7 +125,6 @@ public:
             for (auto &i : people.all_allies_list){
                 i->ghost_loc_x = i->loc_x;
                 i->ghost_loc_y = i->loc_y;
-
             }
 
             turn_clock += fElapsedTime;

@@ -29,8 +29,8 @@ struct character{
     float sight_range = 30;
     bool seen = true;
     int act_remaining = 0;
-    int ghost_loc_x = 10;
-    int ghost_loc_y = 10;
+    int ghost_loc_x;
+    int ghost_loc_y;
     int dest_x = 0;
     int dest_y = 0;
 
@@ -101,16 +101,13 @@ void set_walking(character* person, std::vector<std::vector<int>> path){
         delete person->action[i];
     }
     person->action = {};
-    std::cout << person->action.size() << std::endl;
+
     for (auto &i : path){
         std::cout << i[0] << " " << i[1] << std::endl;
-
         actions* act = new actions;
         act->walk = i;
         person->action.push_back(act);
     }
-    std::cout << person->action.size() << std::endl;
-
 }
 void do_actions(character* person, map& current_map, entities& people, std::vector<node*> node_map) {
     if (person->owntime > person->speed and !person->action.empty()) {
@@ -127,7 +124,6 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
             for (auto &i : people.all_enemies_list){
                 if (can_A_hear_B(i, person, current_map)){
                     std::vector<std::vector<int>> path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, person->loc_x, person->loc_y, node_map, current_map);
-                    std::cout << path[0][0] << " " << path[0][1] << std::endl;
                     set_walking(i, path) ;
                     break;
                 }

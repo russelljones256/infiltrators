@@ -75,7 +75,6 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
             if (!current_node->vecNeighbours[i]->IsVisited) {
                 if (current_node->vecNeighbours[i]->LocalGoal == 1000) {
                     nodes_to_test.push_back(current_node->vecNeighbours[i]);
-
                 }
 
                 if (current_node->LocalGoal + 1 < current_node->vecNeighbours[i]->LocalGoal) {
@@ -103,10 +102,10 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
             current_node = nodes_to_test[0];
         }
     }
-    std::vector<std::vector<int>> path;
+    std::vector<std::vector<int>> path = {};
     current_node = node_map[(current_map.map_width) * y2 + x2];
     if (current_node->Parent == nullptr){
-        return {};
+        return path;
     }
     while (true){
         if (current_node == current_node->Parent or current_node->Parent == nullptr){
