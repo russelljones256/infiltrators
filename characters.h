@@ -7,6 +7,7 @@
 
 #include "maps.h"
 #include "pathfinding.h"
+
 struct actions{
     std::vector<int> walk;
     bool shout = false;
@@ -96,14 +97,14 @@ bool can_A_hear_B(character* a, character* b, map main_map){
 
 
 void set_walking(character* person, std::vector<std::vector<int>> path){
-    std::cout <<person->loc_x << " "<< person->loc_y<< std::endl;
+    std::cout << "Warrior is at: "<<person->loc_x << " "<< person->loc_y<< std::endl;
     for (int i = 0; i < person->action.size(); i++){
         delete person->action[i];
     }
     person->action = {};
 
     for (auto &i : path){
-        std::cout << i[0] << " " << i[1] << std::endl;
+        std::cout << "path: "<< i[0] << " " << i[1] << std::endl;
         actions* act = new actions;
         act->walk = i;
         person->action.push_back(act);
@@ -123,7 +124,9 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
             std::cout<< "Over here!!!" << std::endl;
             for (auto &i : people.all_enemies_list){
                 if (can_A_hear_B(i, person, current_map)){
-                    std::vector<std::vector<int>> path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, person->loc_x, person->loc_y, node_map, current_map);
+                    std::vector<std::vector<int>> path = {};
+                    std::cout << "Warrior position a: " << i->loc_x << " " << i->loc_y << std::endl;
+                    path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, person->loc_x, person->loc_y, node_map, current_map);
                     set_walking(i, path) ;
                     break;
                 }
@@ -131,6 +134,7 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
             delete person->action[0];
             person->action.erase(person->action.begin());
         }
+
         if (person->action[0]->scry){
             for (auto &i : people.all_enemies_list){i->seen = true;};
             delete person->action[0];

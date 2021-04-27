@@ -57,6 +57,10 @@ std::vector<std::vector<int>> A_star(int x1, int y1, int x2, int y2, std::vector
     if (get_map_site(x1, y1, current_map).hard or get_map_site(x2, y2, current_map).hard){
         return {};
     }
+    for (auto &i : node_map){
+        i->IsVisited = false;
+    }
+
     int len = node_map.size();
     for (int i = 0; i < len; i++){
         node_map[i]->GlobalGoal = 1000;
