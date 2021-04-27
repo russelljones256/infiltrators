@@ -92,7 +92,7 @@ public:
 
         warrior_m.name = "Warrior";
         warrior_m.loc_y = 5;
-        warrior_m.loc_x = 4;
+        warrior_m.loc_x = 10;
         warrior_m.dest_y = 0;
         warrior_m.dest_x = 0;
         warrior_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_m.png").get());
@@ -112,7 +112,6 @@ public:
         people.all_enemies_list.push_back(&warrior_m);
 
         node_map = PATHFINDING_H::Generate_nodes_map(current_map);
-        set_walking(&warrior_m, PATHFINDING_H::A_star(warrior_m.loc_x, warrior_m.loc_y, warrior_m.dest_x, warrior_m.dest_y, node_map, current_map));
         draw_map(current_map);
         draw_hud(current_map);
         return true;
@@ -196,7 +195,7 @@ public:
                 act->shout = true;
                 people.all_allies_list[active_character]->action.push_back(act);
                 actions* act2 = new actions;
-                act2->shout = true;
+                act2->pass = true;
                 people.all_allies_list[active_character]->action.push_back(act2);
 
             }else if (GetKey(olc::Key::S).bPressed and people.all_allies_list[active_character]->name == "Mage"  and people.all_allies_list[active_character]->act_remaining > 9) {
@@ -217,6 +216,7 @@ public:
             }
 
             for (auto &i : people.all_allies_list){i->act_remaining = i->speed * 10 - i->action.size();}
+
             bool finished = true;
             for (auto &i : people.all_allies_list) {
                 if (i->act_remaining > 0){

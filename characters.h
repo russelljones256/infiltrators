@@ -96,16 +96,21 @@ bool can_A_hear_B(character* a, character* b, map main_map){
 
 
 void set_walking(character* person, std::vector<std::vector<int>> path){
+    std::cout <<person->loc_x << " "<< person->loc_y<< std::endl;
     for (int i = 0; i < person->action.size(); i++){
-        delete person->action[0];
-        person->action.erase(person->action.begin());
+        delete person->action[i];
     }
+    person->action = {};
     std::cout << person->action.size() << std::endl;
     for (auto &i : path){
+        std::cout << i[0] << " " << i[1] << std::endl;
+
         actions* act = new actions;
         act->walk = i;
         person->action.push_back(act);
     }
+    std::cout << person->action.size() << std::endl;
+
 }
 void do_actions(character* person, map& current_map, entities& people, std::vector<node*> node_map) {
     if (person->owntime > person->speed and !person->action.empty()) {
@@ -119,9 +124,11 @@ void do_actions(character* person, map& current_map, entities& people, std::vect
 
         if (person->action[0]->shout){
             std::cout<< "Over here!!!" << std::endl;
-            for (auto & j : people.all_enemies_list){
-                if (can_A_hear_B(j, person, current_map)){
-                    set_walking(j, PATHFINDING_H::A_star(j->loc_x, j->loc_y, person->loc_x, person->loc_y, node_map, current_map)) ;
+            for (auto &i : people.all_enemies_list){
+                if (can_A_hear_B(i, person, current_map)){
+                    std::vector<std::vector<int>> path = PATHFINDING_H::A_star(i->loc_x, i->loc_y, person->loc_x, person->loc_y, node_map, current_map);
+                    std::cout << path[0][0] << " " << path[0][1] << std::endl;
+                    set_walking(i, path) ;
                     break;
                 }
             }
