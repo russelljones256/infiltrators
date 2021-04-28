@@ -55,7 +55,10 @@ private:
             if (i == active_character){
                 DrawPartialDecal(olc::vi2d(ScreenWidth() - 5 * 32, ScreenHeight() * 0.15),
                                  people.all_allies_list[i]->decal.get(), olc::vi2d(2 + 62 * people.all_allies_list[i]->step, 2 + 36 * 2), olc::vi2d(28, 36), {3.0f, 3.0f});
+                if (people.all_allies_list[i]->name == "Mage"){
+                    DrawStringDecal(olc::vi2d(ScreenWidth() - 6 * 32, ScreenHeight() * 0.31), "Scry", olc::DARK_CYAN, {2.5f, 2.5f});
 
+                }
                 DrawStringDecal(olc::vi2d(ScreenWidth() - 5.5 * 32, ScreenHeight() * 0.05), people.all_allies_list[i]->name,olc::DARK_CYAN, {3.0f, 3.0f});
                 DrawStringDecal(olc::vi2d(ScreenWidth() - 6 * 32, ScreenHeight() * 0.4), std::to_string(people.all_allies_list[i]->act_remaining),olc::DARK_CYAN, {2.5f, 2.5f});
             }else{
@@ -74,7 +77,7 @@ private:
             }
         }
 
-    int active_character = 0;
+    int active_character = 1;
     std::string gamemode = "realtime";
     character ranger_f;
     character ranger_m;
@@ -160,12 +163,17 @@ public:
         update_hud(people, active_character);
 
         if (GetKey(olc::Key::H).bHeld){
-            DrawStringDecal(olc::vi2d(10, 10 ), "Rescue the Mage. Get the ranger and the mage to the grass. Dont get caught!", olc::WHITE, {2.0f, 2.0f});
-            DrawStringDecal(olc::vi2d(320, 320 ), "Controls:", olc::WHITE, {2.0f, 2.0f});
-            DrawStringDecal(olc::vi2d(320, 420 ), "S -> Scry (Only Mage, costs 10 actions)", olc::WHITE, {2.0f, 2.0f});
-            DrawStringDecal(olc::vi2d(320, 520 ), "Y -> Yell (All characters, costs 2 actions)", olc::WHITE, {2.0f, 2.0f});
-            DrawStringDecal(olc::vi2d(320, 620 ), ". -> Wait (All characters, costs 1 actions)", olc::WHITE, {2.0f, 2.0f});
-            DrawStringDecal(olc::vi2d(320, 720 ), "Arrow keys -> Move (All characters, costs 1 action)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 10 ), "Rescue the Mage. Get the ranger and the mage to the grass. Dont get caught!", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 220 ), "Controls:", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 320 ), "S -> Scry (Only Mage, costs 10 actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 420 ), "Y -> Yell (All characters, costs 2 actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 520 ), ". -> Wait (All characters, costs 1 action)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 620 ), "Arrow keys -> Move (All characters, costs 1 action)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(20, 720 ), "Tab -> Switch character (All characters, costs no actions)", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(ScreenWidth() - 16 * 32, ScreenHeight() * 0.4), "Actions remaining ->", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(ScreenWidth() - 14 * 32, ScreenHeight() * 0.2), "Active character ->", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(ScreenWidth() - 16 * 32, ScreenHeight() * 0.65), "Actions remaining ->", olc::WHITE, {2.0f, 2.0f});
+            DrawStringDecal(olc::vi2d(ScreenWidth() - 16 * 32, ScreenHeight() * 0.31), "Special Abilities ->", olc::WHITE, {2.0f, 2.0f});
 
         }
 
