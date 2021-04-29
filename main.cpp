@@ -77,7 +77,7 @@ private:
             }
         }
 
-    int active_character = 1;
+    int active_character = 0;
     std::string gamemode = "realtime";
     character ranger_f;
     character ranger_m;
@@ -116,11 +116,12 @@ public:
         warrior_f.sight_range = 4;
         warrior_f.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/warrior_f.png").get());
 
-        ninja_m.loc_y = 5;
-        ninja_m.pat1_x =  15;
-        ninja_m.pat1_y = 5;
-        ninja_m.pat2_x = 20;
-        ninja_m.pat2_y = 5;
+        ninja_m.loc_y = 24;
+        ninja_m.pat1_x = 10;
+        ninja_m.pat1_y = 24;
+        ninja_m.pat2_x = 32;
+        ninja_m.pat2_y = 24;
+        ninja_m.speed = 1.8;
         ninja_m.sight_range = 4;
         ninja_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ninja_m.png").get());
 
@@ -152,6 +153,8 @@ public:
         people.all_allies_list.push_back(&mage_m);
         people.all_char_list.push_back(&warrior_m);
         people.all_enemies_list.push_back(&warrior_m);
+        people.all_char_list.push_back(&ninja_m);
+        people.all_enemies_list.push_back(&ninja_m);    
 
         node_map = PATHFINDING_H::Generate_nodes_map(current_map);
         draw_map(current_map);
