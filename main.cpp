@@ -121,7 +121,7 @@ public:
         ninja_m.pat1_y = 24;
         ninja_m.pat2_x = 32;
         ninja_m.pat2_y = 24;
-        ninja_m.speed = 1.8;
+        ninja_m.speed = 1.9;
         ninja_m.sight_range = 4;
         ninja_m.decal =  std::make_unique<olc::Decal>(std::make_unique<olc::Sprite>("assets/sprites/characters/ninja_m.png").get());
 
